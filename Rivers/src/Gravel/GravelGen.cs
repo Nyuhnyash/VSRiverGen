@@ -44,7 +44,7 @@ public class GravelGen : ModStdWorldGen
 
     public void InitWorldGen()
     {
-        RockStrataConfig rockStrata = sapi.Assets.Get("worldgen/rockstrata.json").ToObject<RockStrataConfig>();
+        RockStrataConfig rockStrata = sapi.Assets.Get(AssetLocation.Create("worldgen/rockstrata.json")).ToObject<RockStrataConfig>();
 
         foreach (RockStratum stratum in rockStrata.Variants)
         {

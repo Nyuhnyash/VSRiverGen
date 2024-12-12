@@ -46,7 +46,7 @@ public abstract class WorldGenBase : ModSystem
         chunkMapHeight = mapHeight / chunkSize; // 256 / 32
         chunkMapWidth = api.WorldManager.MapSizeX / chunkSize;
 
-        globalConfig = api.Assets.Get("game:worldgen/global.json").ToObject<GlobalConfig>();
+        globalConfig = api.Assets.Get(AssetLocation.Create("game:worldgen/global.json")).ToObject<GlobalConfig>();
 
         globalConfig.defaultRockId = api.World.GetBlock(globalConfig.defaultRockCode).BlockId;
         globalConfig.waterBlockId = api.World.GetBlock(globalConfig.waterBlockCode).BlockId;
