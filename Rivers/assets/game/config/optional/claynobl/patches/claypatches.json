@@ -38,11 +38,6 @@
     "path": "/attributes"
   },
   {
-    "op": "remove",
-    "file": "game:itemtypes/resource/shingle.json",
-    "path": "/skipVariants"
-  },
-  {
     "op": "replace",
     "file": "game:itemtypes/resource/rawbrick.json",
     "path": "/variantgroups",
@@ -60,27 +55,12 @@
   },
   {
     "op": "remove",
-    "file": "game:blocktypes/clay/brick.json",
-    "path": "/attributes/handbook/excludeByType"
-  },
-  {
-    "op": "remove",
     "file": "game:blocktypes/clay/hardened.json",
     "path": "/attributes/handbook/excludeByType"
   },
   {
     "op": "remove",
     "file": "game:blocktypes/clay/chimney.json",
-    "path": "/attributes/handbook/excludeByType"
-  },
-  {
-    "op": "remove",
-    "file": "game:blocktypes/clay/brickslab.json",
-    "path": "/attributes/handbook/excludeByType"
-  },
-  {
-    "op": "remove",
-    "file": "game:blocktypes/clay/brickstairs.json",
     "path": "/attributes/handbook/excludeByType"
   }
 ]
