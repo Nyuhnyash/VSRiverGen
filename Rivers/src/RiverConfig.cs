@@ -63,8 +63,8 @@ public class RiverConfig
     public float riverGain = 0.3f;
     public int riverStrength = 12;
 
-    // How fast rivers and water wheels should flow, can be changed after worldgen.
-    public float riverSpeed = 8;
+    // // How fast rivers and water wheels should flow, can be changed after worldgen.
+    // public float riverSpeed = 8;
 
     // How wide a valley can be at world height.
     public double maxValleyWidth = 50;
@@ -72,15 +72,8 @@ public class RiverConfig
     // How many blocks of submerged land, relative to default height, a spot is considered an ocean at.
     public float oceanThreshold = 30;
 
-    // Water wheel speed and torque.
-    public float wheelSpeedMultiplier = 0.4f;
-    public float wheelTorqueMultiplier = 0.4f;
-
     // If stone should be generated under blocks with gravity.
     public bool fixGravityBlocks = true;
-
-    // If rivers should emit particles on the client.
-    public bool clientParticles = true;
 
     // If boulders and logs should generate near rivers.
     public bool boulders = true;
@@ -90,9 +83,6 @@ public class RiverConfig
 
     // How much of the river bed should be clay.
     public float clayDepositFrequency = 0.2f;
-
-    // If brown and red clay should be integrated.
-    public bool clayExpansion = true;
 
     // Gravel on sides of river.
     public bool gravel = true;

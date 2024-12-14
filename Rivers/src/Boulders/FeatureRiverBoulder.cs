@@ -8,12 +8,12 @@ namespace Rivers;
 
 public class FeatureRiverBoulder : PartialFeature
 {
-    public Block decor;
+    // public Block decor;
     public float multi;
 
     public FeatureRiverBoulder(ICoreServerAPI sapi) : base(sapi)
     {
-        decor = sapi.World.GetBlock(new AssetLocation("waterwheels:sheetmoss-down"));
+        // decor = sapi.World.GetBlock(new AssetLocation("waterwheels:sheetmoss-down"));
         multi = sapi.WorldManager.MapSizeY / 256f;
     }
 
@@ -46,7 +46,7 @@ public class FeatureRiverBoulder : PartialFeature
                 if (y > TerraGenConfig.seaLevel - 3 && !dry)
                 {
                     tempPos.Y++;
-                    if (blockAccessor.GetBlock(tempPos).Replaceable > 5000) blockAccessor.SetBlock(decor.Id, tempPos);
+                    // if (blockAccessor.GetBlock(tempPos).Replaceable > 5000) blockAccessor.SetBlock(decor.Id, tempPos);
 
                     // Remove floating moss.
                     /*

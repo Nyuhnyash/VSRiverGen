@@ -34,7 +34,7 @@ public class ChunkTesselatorManagerPatch
     }
 
     [HarmonyPatch(typeof(ChunkTesselatorManager))]
-    [HarmonyPatch("TesselateChunk")]
+    [HarmonyPatch(nameof(ChunkTesselatorManager.TesselateChunk))]
     public static class TesselateChunkPostfix
     {
         [HarmonyPostfix]
@@ -45,7 +45,7 @@ public class ChunkTesselatorManagerPatch
     }
 
     [HarmonyPatch(typeof(ChunkTesselatorManager))]
-    [HarmonyPatch("TesselateChunk")]
+    [HarmonyPatch(nameof(ChunkTesselatorManager.TesselateChunk))]
     public static class TesselateChunkTranspiler
     {
         [HarmonyTranspiler]
@@ -71,7 +71,7 @@ public class ChunkTesselatorManagerPatch
                 new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ClientSystem), "game")),
                 new CodeInstruction(OpCodes.Ldarg_1),
                 new CodeInstruction(OpCodes.Ldarg_3),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ChunkTesselatorManagerPatch), "SetFlowVectors"))
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ChunkTesselatorManagerPatch), nameof(SetFlowVectors))),
             };
 
             if (insertionIndex != -1)

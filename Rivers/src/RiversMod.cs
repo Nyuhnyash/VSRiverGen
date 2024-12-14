@@ -1,16 +1,10 @@
 ﻿using HarmonyLib;
-using Newtonsoft.Json.Linq;
-using ProtoBuf;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
-using Vintagestory.Common;
 using Vintagestory.GameContent;
 
 namespace Rivers;
@@ -24,152 +18,44 @@ public class RiversMod : ModSystem
 
     public static float RiverSpeed { get; set; } = 1;
 
-    public IClientNetworkChannel clientChannel;
-    public IServerNetworkChannel serverChannel;
+    // public IClientNetworkChannel clientChannel;
+    // public IServerNetworkChannel serverChannel;
 
     public override double ExecuteOrder()
     {
         return 0;
     }
 
-    public override void AssetsLoaded(ICoreAPI api)
-    {
-        if (RiverConfig.Loaded.clayExpansion)
-        {
-            ClayPatch(api);
-        }
-
-        if (RiverConfig.Loaded.riverDeposits)
-        {
-            AddOptionalAssets("alluvial", api.Assets as AssetManager);
-        }
-    }
-
-    public static void ClayPatch(ICoreAPI api)
-    {
-        AssetManager assetManager = api.Assets as AssetManager;
-
-        bool bricklayers = api.ModLoader.IsModEnabled("bricklayers");
-
-        // Get all clayforming recipes.
-        List<IAsset> assets = assetManager.GetMany("recipes/clayforming");
-
-        if (!bricklayers)
-        {
-            foreach (IAsset asset in assets)
-            {
-                try
-                {
-                    // Get token of entire file.
-                    JToken token = JToken.Parse(asset.ToText());
-
-                    // Get ingredients array.
-                    if (token["ingredient"]?["allowedVariants"] != null)
-                    {
-                        // If it contains both blue and fire clay, add the other 2 variants.
-                        JArray array = token["ingredient"]["allowedVariants"] as JArray;
-
-                        bool blue = array.Any(x => x.ToString() == "blue");
-                        bool fire = array.Any(x => x.ToString() == "fire");
-
-                        if (blue && fire)
-                        {
-                            array.Add("brown");
-                            array.Add("red");
-
-                            // Set array.
-                            token["ingredient"]["allowedVariants"] = array;
-
-                            // Convert it back to string and to bytes.
-                            asset.Data = Encoding.UTF8.GetBytes(token.ToString());
-                        }
-                    }
-                }
-                catch
-                {
-                    api.Logger.Log(EnumLogType.Error, $"Rivers: failed to patch clayforming recipe {asset.Name}.");
-                }
-            }
-        }
-
-        AddOptionalAssets("clay", assetManager);
-
-        if (!bricklayers)
-        {
-            AddOptionalAssets("claynobl", assetManager);
-        }
-    }
-
-    public static void AddOptionalAssets(string option, AssetManager assetManager)
-    {
-        string optionalPath = $"config/optional/{option}/";
-
-        List<IAsset> assets = assetManager.GetMany(optionalPath);
-
-        foreach (IAsset asset in assets)
-        {
-            AssetLocation location = asset.Location;
-
-            string path = location.ToString().Replace(optionalPath, "");
-
-            IAsset toChange = assetManager.TryGet(path);
-
-            if (toChange != null)
-            {
-                toChange.Data = new byte[asset.Data.Length];
-                asset.Data.CopyTo(toChange.Data, 0);
-            }
-            else
-            {
-                IAsset newAsset = new Asset(asset.Data, new AssetLocation(path), asset.Origin);
-                assetManager.Assets[new AssetLocation(path)] = newAsset;
-            }
-        }
-    }
-
-    public override void Start(ICoreAPI api)
-    {
-        api.RegisterBlockClass("BlockRiverWaterWheel", typeof(BlockWaterWheel));
-        api.RegisterBlockEntityClass("BERiverWaterWheel", typeof(BEWaterWheel));
-        api.RegisterBlockEntityBehaviorClass("BEBehaviorRiverWaterWheel", typeof(BEBehaviorWaterWheel));
-
-        api.RegisterBlockBehaviorClass("riverblock", typeof(RiverBlockBehavior));
-
-        api.RegisterBlockClass("fullalluvialblock", typeof(FullAlluvialBlock));
-
-        if (RiverConfig.Loaded.clayExpansion) api.RegisterBlockClass("lightablechimney", typeof(LightableChimneyBehavior));
-        if (RiverConfig.Loaded.riverDeposits) api.RegisterBlockClass("muddygravel", typeof(MuddyGravelBlock));
-    }
-
-    public override void StartClientSide(ICoreClientAPI api)
-    {
-        clientChannel = api.Network.RegisterChannel("rivers")
-            .RegisterMessageType(typeof(SpeedMessage))
-            .SetMessageHandler<SpeedMessage>(OnSpeedMessage);
-
-        api.RegisterCommand(new RiverZoomCommand());
-    }
+    // public override void Start(ICoreAPI api)
+    // {
+        // api.RegisterBlockBehaviorClass("riverblock", typeof(RiverBlockBehavior));
+        //
+        // api.RegisterBlockClass("fullalluvialblock", typeof(FullAlluvialBlock));
+        //
+        
+        // if (RiverConfig.Loaded.riverDeposits) api.RegisterBlockBehaviorClass("muddygravel", typeof(MuddyGravelBlock));
+    // }
 
     public override void StartServerSide(ICoreServerAPI api)
     {
-        serverChannel = api.Network.RegisterChannel("rivers")
-            .RegisterMessageType(typeof(SpeedMessage));
-
+        // serverChannel = api.Network.RegisterChannel("rivers")
+        //     .RegisterMessageType(typeof(SpeedMessage));
+        
         api.RegisterCommand(new RiverDebugCommand(api));
 
-        RiverSpeed = RiverConfig.Loaded.riverSpeed;
-        api.Event.PlayerJoin += Event_PlayerJoin;
+        // RiverSpeed = RiverConfig.Loaded.riverSpeed;
+        // api.Event.PlayerJoin += Event_PlayerJoin;
     }
 
-    private void Event_PlayerJoin(IServerPlayer byPlayer)
-    {
-        serverChannel.SendPacket(new SpeedMessage() { riverSpeed = RiverConfig.Loaded.riverSpeed }, byPlayer);
-    }
+    // private void Event_PlayerJoin(IServerPlayer byPlayer)
+    // {
+    //     serverChannel.SendPacket(new SpeedMessage() { riverSpeed = RiverConfig.Loaded.riverSpeed }, byPlayer);
+    // }
 
-    public static void OnSpeedMessage(SpeedMessage message)
-    {
-        RiverSpeed = message.riverSpeed;
-    }
+    // public static void OnSpeedMessage(SpeedMessage message)
+    // {
+    //     RiverSpeed = message.riverSpeed;
+    // }
 
     public override void StartPre(ICoreAPI api)
     {
@@ -203,46 +89,22 @@ public class RiversMod : ModSystem
     public override void Dispose()
     {
         ChunkTesselatorManagerPatch.BottomChunk = null;
-        BlockLayersPatches.Distances = null;
+        // BlockLayersPatches.Distances = null;
         if (patchedLocal)
         {
             harmony.UnpatchAll("rivers");
             Patched = false;
             patchedLocal = false;
         }
-        SeaPatch.Multiplier = 0;
+        // SeaPatch.Multiplier = 0;
     }
 }
 
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-public class SpeedMessage
-{
-    public float riverSpeed = 1;
-}
-
-public class RiverZoomCommand : ClientChatCommand
-{
-    public static bool Zoomed { get; set; }
-
-    public RiverZoomCommand()
-    {
-        Command = "riverzoom";
-        Description = "Zooms out";
-        Syntax = ".riverzoom";
-    }
-
-    public override void CallHandler(IPlayer player, int groupId, CmdArgs args)
-    {
-        try
-        {
-            Zoomed = !Zoomed;
-        }
-        catch
-        {
-
-        }
-    }
-}
+// [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+// public class SpeedMessage
+// {
+//     public float riverSpeed = 1;
+// }
 
 public class RiverDebugCommand : ServerChatCommand
 {
