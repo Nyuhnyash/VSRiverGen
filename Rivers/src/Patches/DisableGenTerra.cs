@@ -35,41 +35,4 @@ public class DisableGenTerra
             return false;
         }
     }
-
-    [HarmonyPatch]
-    public static class BrokenReload
-    {
-        public static MethodBase TargetMethod()
-        {
-            // Get all assemblies.
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            // Get FairPlayGuardian's assembly.
-            Assembly survivalAssembly = assemblies.FirstOrDefault(assembly => assembly.GetName().Name == "VSSurvivalMod");
-
-            Type type = survivalAssembly.GetType("Vintagestory.ServerMods.NoiseLandforms");
-            MethodInfo method = type.GetMethod("ReloadLandforms", BindingFlags.Public | BindingFlags.Static);
-            return method;
-        }
-
-        [HarmonyPrefix]
-        public static bool Prefix()
-        {
-            Type landType = null;
-            Type[] types = AccessTools.GetTypesFromAssembly(Assembly.GetAssembly(typeof(NoiseBase)));
-            foreach (Type type in types)
-            {
-                if (type.Name == "NoiseLandforms")
-                {
-                    landType = type;
-                    break;
-                }
-            }
-            LandformsWorldProperty landforms = landType.GetStaticField<LandformsWorldProperty>("landforms");
-
-            if (landforms == null) return true;
-
-            return false;
-        }
-    }
 }
