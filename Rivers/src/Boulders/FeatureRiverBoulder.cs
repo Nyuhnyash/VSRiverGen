@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -8,12 +9,12 @@ namespace Rivers;
 
 public class FeatureRiverBoulder : PartialFeature
 {
-    // public Block decor;
+    public Block decor;
     public float multi;
 
     public FeatureRiverBoulder(ICoreServerAPI sapi) : base(sapi)
     {
-        // decor = sapi.World.GetBlock(new AssetLocation("waterwheels:sheetmoss-down"));
+        decor = sapi.World.GetBlock(new AssetLocation("game:attachingplant-moss"));
         multi = sapi.WorldManager.MapSizeY / 256f;
     }
 
@@ -53,17 +54,21 @@ public class FeatureRiverBoulder : PartialFeature
                     tempPos.Y++;
                     if (blockAccessor.GetBlock(tempPos).Id == decor.Id) blockAccessor.SetBlock(0, tempPos);
                     */
-                }
-
-                /*
-                if (y > TerraGenConfig.seaLevel - 2)
-                {
-                    foreach (BlockFacing face in BlockFacing.ALLFACES)
+                    
+                    foreach (BlockFacing face in BlockFacing.ALLFACES.Where(f => f != BlockFacing.DOWN))
                     {
                         blockAccessor.SetDecor(decor, tempPos, face);
                     }
                 }
-                */
+
+                
+                // if (y > TerraGenConfig.seaLevel - 2)
+                // {
+                //     foreach (BlockFacing face in BlockFacing.ALLFACES)
+                //     {
+                //         blockAccessor.SetDecor(decor, tempPos, face);
+                //     }
+                // }
             }
         });
     }
