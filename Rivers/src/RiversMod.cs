@@ -6,17 +6,15 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
+using Vintagestory.ServerMods;
+
 
 namespace Rivers;
 
 public class RiversMod : ModSystem
 {
-    public Harmony harmony;
-    public static bool Patched { get; set; } = false;
-    public bool patchedLocal = false;
-    public bool devEnvironment = false;
-
-    public static float RiverSpeed { get; set; } = 1;
+    // public static float RiverSpeed { get; set; } = 1;
 
     // public IClientNetworkChannel clientChannel;
     // public IServerNetworkChannel serverChannel;
@@ -38,6 +36,36 @@ public class RiversMod : ModSystem
 
     public override void StartServerSide(ICoreServerAPI api)
     {
+        var worldGenHandler = (api.World as ServerMain).ModEventManager
+            .GetWorldGenHandler("standard");
+        
+        foreach (var chunkGens in worldGenHandler.OnChunkColumnGen)
+        {
+            var i = chunkGens?.Find(x => x.Method.DeclaringType == typeof(GenTerra));
+            chunkGens?.Remove(i);
+        }
+
+        var action = worldGenHandler.OnInitWorldGen.FirstOrDefault(a => a.Method.DeclaringType == typeof(GenTerra));
+        worldGenHandler.OnInitWorldGen.Remove(action);
+
+        string cfgFileName = "rivers.json";
+        try
+        {
+            RiverConfig fromDisk;
+            if ((fromDisk = api.LoadModConfig<RiverConfig>(cfgFileName)) == null)
+            {
+                api.StoreModConfig(RiverConfig.Loaded, cfgFileName);
+            }
+            else
+            {
+                RiverConfig.Loaded = fromDisk;
+            }
+        }
+        catch
+        {
+            api.StoreModConfig(RiverConfig.Loaded, cfgFileName);
+        }
+        
         // serverChannel = api.Network.RegisterChannel("rivers")
         //     .RegisterMessageType(typeof(SpeedMessage));
         
@@ -57,47 +85,18 @@ public class RiversMod : ModSystem
     //     RiverSpeed = message.riverSpeed;
     // }
 
-    public override void StartPre(ICoreAPI api)
-    {
-        if (!Patched)
-        {
-            harmony = new Harmony("rivers");
-            harmony.PatchAll();
-            Patched = true;
-            patchedLocal = true;
-        }
-
-        string cfgFileName = "rivers.json";
-        try
-        {
-            RiverConfig fromDisk;
-            if ((fromDisk = api.LoadModConfig<RiverConfig>(cfgFileName)) == null || devEnvironment)
-            {
-                api.StoreModConfig(RiverConfig.Loaded, cfgFileName);
-            }
-            else
-            {
-                RiverConfig.Loaded = fromDisk;
-            }
-        }
-        catch
-        {
-            api.StoreModConfig(RiverConfig.Loaded, cfgFileName);
-        }
-    }
-
-    public override void Dispose()
-    {
-        ChunkTesselatorManagerPatch.BottomChunk = null;
-        // BlockLayersPatches.Distances = null;
-        if (patchedLocal)
-        {
-            harmony.UnpatchAll("rivers");
-            Patched = false;
-            patchedLocal = false;
-        }
-        // SeaPatch.Multiplier = 0;
-    }
+    // public override void Dispose()
+    // {
+    //     ChunkTesselatorManagerPatch.BottomChunk = null;
+    //     BlockLayersPatches.Distances = null;
+    //     if (patchedLocal)
+    //     {
+    //         harmony.UnpatchAll("rivers");
+    //         Patched = false;
+    //         patchedLocal = false;
+    //     }
+    //     SeaPatch.Multiplier = 0;
+    // }
 }
 
 // [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]

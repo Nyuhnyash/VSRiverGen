@@ -96,19 +96,10 @@ public class NewGenTerra : ModStdWorldGen
     {
         sapi = api;
 
-        api.Event.ServerRunPhase(EnumServerRunPhase.ModsAndConfigReady, LoadGamePre);
         api.Event.InitWorldGenerator(InitWorldGen, "standard");
         api.Event.ChunkColumnGeneration(OnChunkColumnGen, EnumWorldGenPass.Terrain, "standard");
 
         InitWorldGen();
-    }
-
-    public void LoadGamePre()
-    {
-        if (sapi.WorldManager.SaveGame.WorldType != "standard") return;
-
-        TerraGenConfig.seaLevel = (int)(0.4313725490196078 * sapi.WorldManager.MapSizeY);
-        sapi.WorldManager.SetSeaLevel(TerraGenConfig.seaLevel);
     }
 
     public Type landType;
