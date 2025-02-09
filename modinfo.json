@@ -1,0 +1,17 @@
+{
+	"type": "code",
+	"name": "RiverGen",
+	"modid": "rivergen",
+	"version": "1.0.0",
+
+	"side": "server",
+
+	"description": "Standalone version of rivers.",
+	"website": "https://github.com/Nyuhnyash/VSRiverGen",
+	"authors": [ "Nyuhnyash", "sneeze" ],
+
+	"dependencies": {
+		"game": "*",
+		"survival": "*"
+	}
+}
