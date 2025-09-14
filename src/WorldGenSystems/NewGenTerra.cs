@@ -2,13 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
@@ -95,7 +93,11 @@ public class NewGenTerra : ModStdWorldGen {
 
     public override void StartServerSide(ICoreServerAPI api) {
         sapi = api;
-
+        
+        if (api.World.Config.GetString("landcover").ToFloat() >= 1)
+        {
+            Mod.Logger.Warning("This world has Landcover set to 100%. There will be no oceans and rivers generated at all.");
+        }
         api.Event.InitWorldGenerator(InitWorldGen, "standard");
         api.Event.ChunkColumnGeneration(OnChunkColumnGen, EnumWorldGenPass.Terrain, "standard");
         

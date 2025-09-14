@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -13,6 +14,7 @@ namespace RiverGen;
 
 public class RiverGenMod : ModSystem
 {
+    private Harmony harmony;
     // public static float RiverSpeed { get; set; } = 1;
 
     // public IClientNetworkChannel clientChannel;
@@ -38,14 +40,19 @@ public class RiverGenMod : ModSystem
                 RiverConfig.Loaded = fromDisk;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            api.StoreModConfig(RiverConfig.Loaded, cfgFileName);
+            Mod.Logger.Error("Failed to load mod config from file. Defaults will be used. " + ex);
+        }
+
+        if (!RiverConfig.Loaded.dryRiverbeds)
+        {
+            harmony = new Harmony(Mod.Info.ModID);
+            harmony.PatchCategory(nameof(BlockLayersPatches));
         }
         
         // serverChannel = api.Network.RegisterChannel("rivers")
         //     .RegisterMessageType(typeof(SpeedMessage));
-        
         api.RegisterCommand(new RiverDebugCommand(api));
 
         // RiverSpeed = RiverConfig.Loaded.riverSpeed;
@@ -62,18 +69,10 @@ public class RiverGenMod : ModSystem
     //     RiverSpeed = message.riverSpeed;
     // }
 
-    // public override void Dispose()
-    // {
-    //     ChunkTesselatorManagerPatch.BottomChunk = null;
-    //     BlockLayersPatches.Distances = null;
-    //     if (patchedLocal)
-    //     {
-    //         harmony.UnpatchAll("rivers");
-    //         Patched = false;
-    //         patchedLocal = false;
-    //     }
-    //     SeaPatch.Multiplier = 0;
-    // }
+    public override void Dispose()
+    {
+        harmony?.UnpatchAll(Mod.Info.ModID);
+    }
 }
 
 // [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]

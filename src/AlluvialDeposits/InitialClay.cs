@@ -83,11 +83,24 @@ public class InitialClay : ModStdWorldGen
             typeNoise = new Noise(api.World.Seed + 1, 0.001f, 1);
             threshold = 1 - RiverConfig.Loaded.clayDepositFrequency;
 
-            clayBlockIds = api.World
-                .SearchBlocks(new AssetLocation("game:rawclay-*-none"))
-                .Select(clay => clay.Id)
+            clayBlockIds = RiverConfig.Loaded.riverDepositsBlocks
+                .SelectMany(blockPath =>
+                {
+                    var foundBlocks = api.World.SearchBlocks(AssetLocation.Create(blockPath));
+                    if (foundBlocks.Length == 0)
+                    {
+                        Mod.Logger.Warning("No blocks found for a wildcard from riverDepositsBlocks: "  + blockPath);
+                    }
+                    return foundBlocks.Select(block => block.Id);
+                })
                 .ToArray();
 
+            if (clayBlockIds.Length == 0)
+            {
+                Mod.Logger.Warning("No riverDepositsBlocks defined. River deposits will not be generated.");
+                return;
+            }
+            
             muddyGravelId = api.World.GetBlock(new AssetLocation("game:muddygravel")).Id;
             
             api.Event.ChunkColumnGeneration(ChunkColumnGeneration, EnumWorldGenPass.Vegetation, "standard");

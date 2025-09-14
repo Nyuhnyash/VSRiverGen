@@ -98,9 +98,13 @@ public class GeneratePartialFeatures : WorldGenPartial
 
         if (RiverConfig.Loaded.boulders)
         {
-            features.Add(log);
             features.Add(riverBoulder);
             features.Add(tinyBoulder);
+        }
+
+        if (RiverConfig.Loaded.fallenLogs)
+        {
+            features.Add(log);
         }
     }
 

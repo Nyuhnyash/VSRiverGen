@@ -1,4 +1,6 @@
-﻿namespace RiverGen;
+﻿using System.Collections.Generic;
+
+namespace RiverGen;
 
 public class RiverConfig
 {
@@ -75,15 +77,25 @@ public class RiverConfig
     // If stone should be generated under blocks with gravity.
     public bool fixGravityBlocks = true;
 
-    // If boulders and logs should generate near rivers.
+    // If boulders should generate in rivers.
     public bool boulders = true;
+    // If fallen logs should generate near rivers.
+    public bool fallenLogs = true;
 
     // If deposits should generate.
     public bool riverDeposits = true;
+    // Blocks to use for deposits
+    public IEnumerable<string> riverDepositsBlocks = new []
+    {
+        "game:rawclay-red-none",
+        "game:rawclay-blue-none",
+    };
 
     // How much of the river bed should be clay.
     public float clayDepositFrequency = 0.2f;
 
     // Gravel on sides of river.
     public bool gravel = true;
+
+    public bool dryRiverbeds = true;
 }
