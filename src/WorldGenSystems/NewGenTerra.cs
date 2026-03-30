@@ -355,7 +355,7 @@ public class NewGenTerra : ModStdWorldGen {
         var regionChunkSize = sapi.WorldManager.RegionSize / chunkSize;
         var rlX = chunkX % regionChunkSize;
         var rlZ = chunkZ % regionChunkSize;
-        var rockId = GlobalConfig.defaultRockId;
+        var rockId = gcfg.defaultRockId;
 
         // Get climate data.
         var climateMap = chunks[0].MapChunk.MapRegion.ClimateMap;
@@ -652,7 +652,7 @@ public class NewGenTerra : ModStdWorldGen {
                 var distY = oceanicity + ComputeOceanAndUpheavalDistY(upheavalStrength, worldX, worldZ, distGeo);
 
                 columnResults[chunkIndex2d].WaterBlockID =
-                    oceanicity > 1 ? GlobalConfig.saltWaterBlockId : GlobalConfig.waterBlockId;
+                    oceanicity > 1 ? gcfg.saltWaterBlockId : gcfg.waterBlockId;
 
                 // Prepare the noise for the entire column.
                 var columnNoise =
@@ -748,7 +748,7 @@ public class NewGenTerra : ModStdWorldGen {
         var chunkBlockData = chunks[0].Data;
 
         // First set all the fully solid layers in bulk, as much as possible.
-        chunkBlockData.SetBlockBulk(0, chunkSize, chunkSize, GlobalConfig.mantleBlockId);
+        chunkBlockData.SetBlockBulk(0, chunkSize, chunkSize, gcfg.mantleBlockId);
         var yBase = 1;
         for (; yBase < mapSizeY - 1; yBase++) {
             if (layerFullySolid[yBase]) {
@@ -784,7 +784,7 @@ public class NewGenTerra : ModStdWorldGen {
                 var waterId = columnResult.WaterBlockID;
                 surfaceWaterId = waterId;
 
-                if (yBase < seaLevel && waterId != GlobalConfig.saltWaterBlockId &&
+                if (yBase < seaLevel && waterId != gcfg.saltWaterBlockId &&
                     !columnResult
                         .ColumnBlockSolidities
                         [seaLevel -
@@ -798,8 +798,8 @@ public class NewGenTerra : ModStdWorldGen {
                         climateBotRight) >> 16) & 0xFF;
 
                     var distort = (float)distort2dx.Noise((chunkX * chunkSize) + localX, worldZ) / 20f;
-                    var tempF = CompatUtil.GetScaledAdjustedTemperatureFloat(temp, 0) + distort;
-                    if (tempF < TerraGenConfig.WaterFreezingTempOnGen) surfaceWaterId = GlobalConfig.lakeIceBlockId;
+                    var tempF = Climate.GetScaledAdjustedTemperatureFloat(temp, 0) + distort;
+                    if (tempF < TerraGenConfig.WaterFreezingTempOnGen) surfaceWaterId = gcfg.lakeIceBlockId;
                 }
 
                 terrainHeightMap[mapIndex] =
